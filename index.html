@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <title>泰香廚房</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --accent:        #E07B2A;
+      --accent-dark:   #B85E15;
+      --accent-light:  #FDF3E7;
+      --text:          #1A1A1A;
+      --text-sub:      #666666;
+      --bg:            #FFFFFF;
+      --bg-page:       #F2F2F2;
+      --border:        #E8E8E8;
+      --card-radius:   12px;
+      --lang-h:        45px;
+      --tab-h:         44px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family:
+        -apple-system, 'Helvetica Neue',
+        'Noto Sans TC', 'Noto Sans JP', 'Noto Sans KR',
+        'PingFang TC', 'Hiragino Sans',
+        sans-serif;
+      background: var(--bg-page);
+      color: var(--text);
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Language Bar ──────────────────────────────── */
+    .lang-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: var(--lang-h);
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 0 16px;
+    }
+
+    .lang-btn {
+      padding: 5px 13px;
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      background: transparent;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--text-sub);
+      transition: background 0.18s, color 0.18s, border-color 0.18s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .lang-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+      font-weight: 700;
+    }
+
+    /* ── Store Hero ─────────────────────────────────── */
+    .store-hero {
+      width: 100%;
+      height: 170px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 72px;
+      user-select: none;
+    }
+
+    /* ── Store Info ─────────────────────────────────── */
+    .store-info {
+      background: var(--bg);
+      padding: 18px 16px 16px;
+      border-bottom: 4px solid var(--bg-page);
+    }
+
+    .store-name {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 10px;
+      letter-spacing: -0.3px;
+    }
+
+    .store-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .store-meta-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 7px;
+      font-size: 13px;
+      color: var(--text-sub);
+      line-height: 1.5;
+    }
+
+    .store-meta-icon {
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .store-phone a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .dining-info {
+      margin-top: 12px;
+      padding: 10px 12px;
+      background: var(--accent-light);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      font-size: 12.5px;
+      color: var(--text-sub);
+      line-height: 1.65;
+    }
+
+    /* ── Category Tabs ──────────────────────────────── */
+    .cat-tabs {
+      position: sticky;
+      top: var(--lang-h);
+      z-index: 90;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .cat-tabs::-webkit-scrollbar { display: none; }
+
+    .cat-tab {
+      flex-shrink: 0;
+      padding: 0 18px;
+      height: var(--tab-h);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-sub);
+      cursor: pointer;
+      border-bottom: 2.5px solid transparent;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      transition: color 0.18s, border-color 0.18s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .cat-tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* ── Menu Content ───────────────────────────────── */
+    .menu-content {
+      padding-bottom: 60px;
+    }
+
+    /* ── Category Section ───────────────────────────── */
+    .cat-section {
+      margin-top: 8px;
+      scroll-margin-top: calc(var(--lang-h) + var(--tab-h) + 2px);
+    }
+
+    .cat-header {
+      padding: 14px 16px 10px;
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text);
+      background: var(--bg-page);
+      border-left: 4px solid var(--accent);
+      letter-spacing: -0.2px;
+    }
+
+    .items-list {
+      background: var(--bg);
+    }
+
+    /* ── Item Card ──────────────────────────────────── */
+    .item-card {
+      display: flex;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      gap: 12px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.12s;
+      align-items: flex-start;
+    }
+
+    .item-card:last-child { border-bottom: none; }
+    .item-card:active { background: #F8F8F8; }
+
+    .item-thumb {
+      flex-shrink: 0;
+      width: 82px;
+      height: 82px;
+      border-radius: 10px;
+      overflow: hidden;
+      background: var(--accent-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 38px;
+      border: 1px solid var(--border);
+    }
+
+    .item-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .item-body {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .item-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.35;
+    }
+
+    .item-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      padding: 2px 7px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+
+    .badge-R { background: #FFF3E0; color: #BF360C; border: 1px solid #FFCC80; }
+    .badge-1 { background: #FFFDE7; color: #E65100; border: 1px solid #FFE082; }
+    .badge-2 { background: #FFF3E0; color: #D84315; border: 1px solid #FFAB40; }
+    .badge-3 { background: #FFEBEE; color: #B71C1C; border: 1px solid #EF9A9A; }
+    .badge-P { background: #FCE4EC; color: #880E4F; border: 1px solid #F48FB1; }
+    .badge-B { background: #F3E5F5; color: #4A148C; border: 1px solid #CE93D8; }
+    .badge-L { background: #E8EAF6; color: #1A237E; border: 1px solid #9FA8DA; }
+    .badge-V { background: #E8F5E9; color: #1B5E20; border: 1px solid #A5D6A7; }
+    .badge-H { background: #E0F2F1; color: #004D40; border: 1px solid #80CBC4; }
+
+    .item-prices {
+      font-size: 13px;
+    }
+
+    .price-single {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .price-multi {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .price-row-label {
+      color: var(--text-sub);
+      font-size: 12.5px;
+      flex-shrink: 0;
+    }
+
+    .price-row-dots {
+      flex: 1;
+      border-bottom: 1px dotted var(--border);
+      margin-bottom: 3px;
+    }
+
+    .price-row-value {
+      font-weight: 700;
+      color: var(--accent);
+      font-size: 13.5px;
+      white-space: nowrap;
+    }
+
+    .price-market {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--accent);
+      font-style: italic;
+    }
+
+    /* ── Modal ──────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      z-index: 200;
+      display: flex;
+      align-items: flex-end;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-sheet {
+      background: var(--bg);
+      width: 100%;
+      max-width: 430px;
+      margin: 0 auto;
+      max-height: 91vh;
+      border-radius: 20px 20px 0 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+      overscroll-behavior: contain;
+    }
+
+    .modal-overlay.open .modal-sheet {
+      transform: translateY(0);
+    }
+
+    .modal-drag-handle {
+      width: 36px;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin: 12px auto 0;
+    }
+
+    .modal-image-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      background: var(--accent-light);
+      overflow: hidden;
+      touch-action: pinch-zoom;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-image-wrap .modal-emoji {
+      font-size: 90px;
+      user-select: none;
+    }
+
+    .modal-image-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.38);
+      border: none;
+      color: #fff;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      -webkit-tap-highlight-color: transparent;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-body {
+      padding: 20px 16px 44px;
+    }
+
+    .modal-name {
+      font-size: 21px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 10px;
+      line-height: 1.3;
+      letter-spacing: -0.3px;
+    }
+
+    .modal-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .modal-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 5px 11px;
+      border-radius: 14px;
+      font-size: 12.5px;
+      font-weight: 600;
+    }
+
+    .modal-price-block {
+      margin-bottom: 16px;
+    }
+
+    .modal-section-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-sub);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 8px;
+    }
+
+    .modal-price-single {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .modal-price-market {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--accent);
+      font-style: italic;
+    }
+
+    .modal-price-table {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .modal-price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      font-size: 15px;
+    }
+
+    .modal-price-row:last-child { border-bottom: none; }
+
+    .modal-price-row-label { color: var(--text-sub); }
+    .modal-price-row-value { font-weight: 700; color: var(--accent); }
+
+    .modal-text-block {
+      margin-top: 12px;
+      padding: 12px 14px;
+      background: var(--bg-page);
+      border-radius: 10px;
+    }
+
+    .modal-text-block .modal-section-label {
+      margin-bottom: 5px;
+    }
+
+    .modal-text-content {
+      font-size: 14px;
+      color: var(--text-sub);
+      line-height: 1.7;
+    }
+
+    /* ── Divider ───────────────────────────────────── */
+    .modal-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 16px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Language Bar ── -->
+  <nav class="lang-bar" id="langBar"></nav>
+
+  <!-- ── Store Header ── -->
+  <header>
+    <div class="store-hero" id="storeHero">🍛</div>
+    <div class="store-info">
+      <h1 class="store-name" id="storeName"></h1>
+      <div class="store-meta">
+        <div class="store-meta-row">
+          <span class="store-meta-icon">📍</span>
+          <span id="storeAddress"></span>
+        </div>
+        <div class="store-meta-row">
+          <span class="store-meta-icon">📞</span>
+          <span class="store-phone" id="storePhone"></span>
+        </div>
+      </div>
+      <div class="dining-info" id="diningInfo"></div>
+    </div>
+  </header>
+
+  <!-- ── Category Tabs ── -->
+  <nav class="cat-tabs" id="catTabs"></nav>
+
+  <!-- ── Menu ── -->
+  <main class="menu-content" id="menuContent"></main>
+
+  <!-- ── Modal ── -->
+  <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true">
+    <div class="modal-sheet" id="modalSheet">
+      <div class="modal-drag-handle"></div>
+      <div class="modal-image-wrap" id="modalImageWrap">
+        <button class="modal-close-btn" id="modalCloseBtn" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+<script>
+'use strict';
+
+// ── Store Data ───────────────────────────────────────────────────────────────
+const store = {
+  name:    { zh: '泰香廚房', en: 'Thai Aroma Kitchen', ja: 'タイ香厨房', ko: '타이 아로마 키친' },
+  address: {
+    zh: '台北市大安區泰式路 88 號',
+    en: '88 Thai St., Da\'an District, Taipei',
+    ja: '台北市大安区タイ通り88号',
+    ko: '타이페이시 다안구 타이식로 88번지',
+  },
+  phone: '+886-2-2345-6789',
+  dining: {
+    zh: '營業時間：週二至週日 11:30–14:30、17:30–21:30\n週一公休',
+    en: 'Hours: Tue–Sun 11:30–14:30, 17:30–21:30\nClosed Monday',
+    ja: '営業時間：火〜日 11:30–14:30、17:30–21:30\n月曜定休',
+    ko: '영업시간: 화–일 11:30–14:30, 17:30–21:30\n월요일 휴무',
+  },
+};
+
+// ── Categories ───────────────────────────────────────────────────────────────
+const categories = [
+  { id: 'main',    label: { zh: '主餐類', en: 'Mains',    ja: 'メインディッシュ', ko: '메인요리'  } },
+  { id: 'side',    label: { zh: '單點類', en: 'Sides',    ja: 'サイドメニュー',   ko: '사이드메뉴' } },
+  { id: 'dessert', label: { zh: '甜點類', en: 'Desserts', ja: 'デザート',        ko: '디저트'    } },
+  { id: 'drink',   label: { zh: '飲料類', en: 'Drinks',   ja: 'ドリンク',        ko: '음료'      } },
+];
+
+// ── Tag Definitions ──────────────────────────────────────────────────────────
+const TAGS = {
+  R: { icon: '⭐',     label: { zh: '本店推薦', en: 'Recommended',    ja: 'おすすめ',     ko: '추천'         } },
+  1: { icon: '🌶️',    label: { zh: '小辣',     en: 'Mild Spicy',     ja: '少し辛い',     ko: '약간 매운'     } },
+  2: { icon: '🌶️🌶️', label: { zh: '中辣',     en: 'Medium Spicy',   ja: '中辛',         ko: '보통 매운'     } },
+  3: { icon: '🔥',     label: { zh: '大辣',     en: 'Very Spicy',     ja: '激辛',         ko: '매우 매운'     } },
+  P: { icon: '🐷',     label: { zh: '含豬肉',   en: 'Contains Pork',  ja: '豚肉入り',     ko: '돼지고기 포함' } },
+  B: { icon: '🐂',     label: { zh: '含牛肉',   en: 'Contains Beef',  ja: '牛肉入り',     ko: '소고기 포함'   } },
+  L: { icon: '🐑',     label: { zh: '含羊肉',   en: 'Contains Lamb',  ja: 'ラム入り',     ko: '양고기 포함'   } },
+  V: { icon: '🥬',     label: { zh: '素食',     en: 'Vegetarian',     ja: 'ベジタリアン', ko: '채식'          } },
+  H: { icon: '☪️',    label: { zh: '清真認證',  en: 'Halal Certified', ja: 'ハラール認証', ko: '할랄 인증'    } },
+};
+
+const MARKET_PRICE = { zh: '時價', en: 'Market Price', ja: '時価', ko: '시가' };
+
+const MODAL_LABELS = {
+  price: { zh: '價格',  en: 'Price',       ja: '価格',  ko: '가격' },
+  desc:  { zh: '說明',  en: 'Description', ja: '説明',  ko: '설명' },
+  note:  { zh: '備註',  en: 'Note',        ja: '備考',  ko: '비고' },
+};
+
+// ── Menu Items ───────────────────────────────────────────────────────────────
+const menuItems = [
+  // ── 主餐類
+  {
+    id: 'main-001', category: 'main',
+    names: { zh: '手作泰式紅咖哩', en: 'Handmade Thai Red Curry', ja: '手作りタイレッドカレー', ko: '수제 태국 레드커리' },
+    price: [
+      { label: { zh: '烤雞腿', en: 'Roasted Chicken', ja: 'ローストチキン', ko: '구운 닭다리' }, value: 270 },
+      { label: { zh: '牛肉',   en: 'Beef',            ja: '牛肉',           ko: '소고기'       }, value: 340 },
+      { label: { zh: '蔬食',   en: 'Veggie',          ja: 'ベジタリアン',   ko: '채식'         }, value: 250 },
+    ],
+    image: null, emoji: '🍛', tags: ['R', '1', 'B'],
+    desc: { zh: '', en: '', ja: '', ko: '' }, note: { zh: '', en: '', ja: '', ko: '' },
+  },
+  {
+    id: 'main-002', category: 'main',
+    names: { zh: '手作泰式黃咖哩（微辣）', en: 'Handmade Thai Yellow Curry (Mild)', ja: '手作りタイイエローカレー（少し辛い）', ko: '수제 태국 옐로우카레 (약간 매운)' },
+    price: [
+      { label: { zh: '烤雞腿', en: 'Roasted Chicken', ja: 'ローストチキン', ko: '구운 닭다리' }, value: 250 },
+      { label: { zh: '牛肉',   en: 'Beef',            ja: '牛肉',           ko: '소고기'       }, value: 320 },
+      { label: { zh: '蔬食',   en: 'Veggie',          ja: 'ベジタリアン',   ko: '채식'         }, value: 230 },
+    ],
+    image: null, emoji: '🍛', tags: ['1', 'B'],
+    desc: { zh: '', en: '', ja: '', ko: '' }, note: { zh: '', en: '', ja: '', ko: '' },
+  },
+  {
+    id: 'main-003', category: 'main',
+    names: { zh: '泰式檸檬蒸鱸魚', en: 'Thai Steamed Sea Bass with Lemon', ja: 'タイ風レモン蒸しスズキ', ko: '태국식 레몬 찐 농어' },
+    price: [
+      { label: { zh: '整尾', en: 'Whole', ja: '一尾', ko: '한 마리' }, value: 400 },
+      { label: { zh: '半尾', en: 'Half',  ja: '半尾', ko: '반 마리' }, value: 240 },
+    ],
+    image: null, emoji: '🐟', tags: [],
+    desc: { zh: '', en: '', ja: '', ko: '' }, note: { zh: '', en: '', ja: '', ko: '' },
+  },
+  {
+    id: 'main-004', category: 'main',
+    names: { zh: '酥炸無骨海鱸佐羅望子醬（不辣）', en: 'Crispy Boneless Sea Bass with Tamarind Sauce', ja: 'カリカリ骨なしスズキのタマリンドソース添え', ko: '바삭한 뼈없는 농어 타마린드소스' },
+    price: [
+      { label: { zh: '整尾', en: 'Whole', ja: '一尾', ko: '한 마리' }, value: 430 },
+      { label: { zh: '半尾', en: 'Half',  ja: '半尾', ko: '반 마리' }, value: 240 },
+    ],
+    image: null, emoji: '🐟', tags: ['R'],
+    desc: { zh: '', en: '', ja: '', ko: '' }, note: { zh: '', en: '', ja: '', ko: '' },
+  },
+  {
+    id: 'main-005', category: 'main',
+    names: { zh: '冬蔭功酸辣海鮮湯', en: 'Tom Yum Goong Seafood Soup', ja: 'トムヤムクン海鮮スープ', ko: '똠얌꿍 해물 수프' },
+    price: [
+      { label: { zh: '小', en: 'Small', ja: '小', ko: '소' }, value: 270 },
+      { label: { zh: '大', en: 'Large', ja: '大', ko: '대' }, value: 510 },
+    ],
+    image: null, emoji: '🍲', tags: ['3'],
+    desc: { zh: '', en: '', ja: '', ko: '' }, note: { zh: '', en: '', ja: '', ko: '' },
+  },
+  {
+    id: 'main-006', category: 'main',
+    names: { zh: '南薑香茅椰奶雞湯（不辣）', en: 'Coconut Chicken Soup with Galangal & Lemongrass', ja: 'ガランガルとレモングラスのチキンスープ', ko: '갈랑갈 레몬그라스 코코넛 치킨 수프' },
+    price: [
+      { label: { zh: '小', en: 'Small', ja: '小', ko: '소' }, value: 250 },
+      { label: { zh: '大', en: 'Large', ja: '大', ko: '대' }, value: 460 },
+    ],
+    image: null, emoji: '🍲', tags: [],
+    desc: { zh: '', en: '', ja: '', ko: '' }, note: { zh: '', en: '', ja: '', ko: '' },
+  },
+  // ── 單點類
+  {
+    id: 'side-001', category: 'side',
+    names: { zh: '月亮蝦餅佐手工甜雞醬', en: 'Moon Shrimp Cake with Sweet Chili Sauce', ja: 'ムーンシュリンプケーキ 甘辛チキンソース添え', ko: '달새우전 수제 스위트칠리소스' },
+    price: [
+      { label: { zh: '大 8 片', en: 'Large 8 pcs', ja: '大 8枚', ko: '대 8조각' }, value: 310 },
+      { label: { zh: '小 4 片', en: 'Small 4 pcs', ja: '小 4枚', ko: '소 4조각' }, value: 170 },
+    ],
+    image: null, emoji: '🥟', tags: ['R'],
+    desc: { zh: '', en: '', ja: '', ko: '' }, note: { zh: '', en: '', ja: '', ko: '' },
+  },
+  {
+    id: 'side-002', category: 'side',
+    names: { zh: '泰式炸雞佐羅望子醬（不辣）', en: 'Thai Fried Chicken with Tamarind Sauce', ja: 'タイ風フライドチキン タマリンドソース添え', ko: '태국식 프라이드 치킨 타마린드소스' },
+    price: [{ label: null, value: 220 }],
+    image: null, emoji: '🍗', tags: [],
+    desc: { zh: '', en: '', ja: '', ko: '' }, note: { zh: '', en: '', ja: '', ko: '' },
+  },
+  {
+    id: 'side-003', category: 'side',
+    names: { zh: '炸豆腐佐手工酸甜醬', en: 'Fried Tofu with Sweet & Sour Sauce', ja: '揚げ豆腐 甘酢ソース添え', ko: '두부 튀김 스위트사워소스' },
+    price: [{ label: null, value: 95 }],
+    image: null, emoji: '🧈', tags: ['V'],
+    desc: { zh: '', en: '', ja: '', ko: '' }, note: { zh: '', en: '', ja: '', ko: '' },
+  },
+  {
+    id: 'side-004', category: 'side',
+    names: { zh: '泰式女婿蛋', en: 'Thai Son-in-Law Eggs', ja: 'タイ風婿殿の卵', ko: '태국식 사위 계란' },
+    price: [{ label: null, value: 95 }],
+    image: null, emoji: '🥚', tags: ['V'],
+    desc: { zh: '', en: '', ja: '', ko: '' }, note: { zh: '', en: '', ja: '', ko: '' },
+  },
+  {
+    id: 'side-005', category: 'side',
+    names: { zh: '豆醬高麗菜', en: 'Cabbage in Bean Paste', ja: '豆みそキャベツ炒め', ko: '된장 양배추 볶음' },
+    price: [
+      { label: { zh: '大', en: 'Large', ja: '大', ko: '대' }, value: 180 },
+      { label: { zh: '小', en: 'Small', ja: '小', ko: '소' }, value: 100 },
+    ],
+    image: null, emoji: '🥬', tags: ['V'],
+    desc: { zh: '', en: '', ja: '', ko: '' }, note: { zh: '', en: '', ja: '', ko: '' },
+  },
+  {
+    id: 'side-006', category: 'side',
+    names: { zh: '蝦醬高麗菜', en: 'Cabbage in Shrimp Paste', ja: 'エビみそキャベツ炒め', ko: '새우장 양배추 볶음' },
+    price: [
+      { label: { zh: '大', en: 'Large', ja: '大', ko: '대' }, value: 180 },
+      { label: { zh: '小', en: 'Small', ja: '小', ko: '소' }, value: 100 },
+    ],
+    image: null, emoji: '🥬', tags: [],
+    desc: { zh: '', en: '', ja: '', ko: '' }, note: { zh: '', en: '', ja: '', ko: '' },
+  },
+  {
+    id: 'side-007', category: 'side',
+    names: { zh: '泰式涼拌沙拉', en: 'Thai Mixed Salad', ja: 'タイ風ミックスサラダ', ko: '태국식 혼합 샐러드' },
+    price: [
+      { label: { zh: '大', en: 'Large', ja: '大', ko: '대' }, value: 170 },
+      { label: { zh: '小', en: 'Small', ja: '小', ko: '소' }, value: 100 },
+    ],
+    image: null, emoji: '🥗', tags: ['V'],
+    desc: { zh: '', en: '', ja: '', ko: '' }, note: { zh: '', en: '', ja: '', ko: '' },
+  },
+  {
+    id: 'side-008', category: 'side',
+    names: { zh: '泰國茉莉香米', en: 'Thai Jasmine Rice', ja: 'タイジャスミンライス', ko: '태국 쟈스민 쌀밥' },
+    price: [{ label: null, value: 20 }],
+    image: null, emoji: '🍚', tags: ['V'],
+    desc: { zh: '', en: '', ja: '', ko: '' },
+    note: { zh: '一碗', en: 'Per bowl', ja: '一杯', ko: '한 공기' },
+  },
+  // ── 甜點類
+  {
+    id: 'dessert-001', category: 'dessert',
+    names: { zh: '焦糖糯米炸香蕉', en: 'Caramel Sticky Rice Fried Banana', ja: 'キャラメルもち米揚げバナナ', ko: '캐러멜 찹쌀 바나나 튀김' },
+    price: [{ label: null, value: 50 }],
+    image: null, emoji: '🍌', tags: ['V'],
+    desc: { zh: '', en: '', ja: '', ko: '' },
+    note: { zh: '一份', en: 'Per serving', ja: '一人前', ko: '1인분' },
+  },
+  {
+    id: 'dessert-002', category: 'dessert',
+    names: { zh: '椰汁西米露', en: 'Coconut Sago Pudding', ja: 'ココナッツサゴプリン', ko: '코코넛 사고 푸딩' },
+    price: [{ label: null, value: 30 }],
+    image: null, emoji: '🥥', tags: ['V'],
+    desc: { zh: '', en: '', ja: '', ko: '' },
+    note: { zh: '一杯', en: 'Per cup', ja: '一杯', ko: '한 잔' },
+  },
+  // ── 飲料類
+  {
+    id: 'drink-001', category: 'drink',
+    names: { zh: '泰式奶茶', en: 'Thai Milk Tea', ja: 'タイミルクティー', ko: '태국 밀크티' },
+    price: [
+      { label: { zh: '杯', en: 'Cup', ja: 'カップ', ko: '컵'  }, value: 70  },
+      { label: { zh: '壺', en: 'Pot', ja: 'ポット', ko: '포트' }, value: 160 },
+    ],
+    image: null, emoji: '🧋', tags: [],
+    desc: { zh: '', en: '', ja: '', ko: '' }, note: { zh: '', en: '', ja: '', ko: '' },
+  },
+  {
+    id: 'drink-002', category: 'drink',
+    names: { zh: '山竹汁', en: 'Mangosteen Juice', ja: 'マンゴスチンジュース', ko: '망고스틴 주스' },
+    price: [
+      { label: { zh: '杯', en: 'Cup', ja: 'カップ', ko: '컵'  }, value: 70  },
+      { label: { zh: '壺', en: 'Pot', ja: 'ポット', ko: '포트' }, value: 160 },
+    ],
+    image: null, emoji: '🧃', tags: [],
+    desc: { zh: '', en: '', ja: '', ko: '' }, note: { zh: '', en: '', ja: '', ko: '' },
+  },
+  {
+    id: 'drink-003', category: 'drink',
+    names: { zh: '羅望子汁', en: 'Tamarind Juice', ja: 'タマリンドジュース', ko: '타마린드 주스' },
+    price: [
+      { label: { zh: '杯', en: 'Cup', ja: 'カップ', ko: '컵'  }, value: 70  },
+      { label: { zh: '壺', en: 'Pot', ja: 'ポット', ko: '포트' }, value: 160 },
+    ],
+    image: null, emoji: '🧃', tags: [],
+    desc: { zh: '', en: '', ja: '', ko: '' }, note: { zh: '', en: '', ja: '', ko: '' },
+  },
+  {
+    id: 'drink-004', category: 'drink',
+    names: { zh: '椰子汁', en: 'Coconut Juice', ja: 'ヤシジュース', ko: '코코넛 주스' },
+    price: [
+      { label: { zh: '杯', en: 'Cup', ja: 'カップ', ko: '컵'  }, value: 70  },
+      { label: { zh: '壺', en: 'Pot', ja: 'ポット', ko: '포트' }, value: 160 },
+    ],
+    image: null, emoji: '🥥', tags: [],
+    desc: { zh: '', en: '', ja: '', ko: '' }, note: { zh: '', en: '', ja: '', ko: '' },
+  },
+  {
+    id: 'drink-005', category: 'drink',
+    names: { zh: '泰國啤酒（聖獅／大象 330ml）', en: 'Thai Beer (Leo / Chang 330ml)', ja: 'タイビール（レオ／チャン 330ml）', ko: '태국 맥주 (레오/창 330ml)' },
+    price: [{ label: null, value: 80 }],
+    image: null, emoji: '🍺', tags: [],
+    desc: { zh: '', en: '', ja: '', ko: '' },
+    note: { zh: '瓶裝', en: 'Bottled', ja: 'ボトル入り', ko: '병' },
+  },
+];
+
+// ── State ────────────────────────────────────────────────────────────────────
+let lang = 'zh';
+let scrollY = 0;
+let activeItem = null;
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+const t = (obj) => (obj && typeof obj === 'object') ? (obj[lang] || '') : (obj || '');
+const nt = (n) => `NT$${n}`;
+const el = (id) => document.getElementById(id);
+
+function e(tag, cls, html) {
+  const node = document.createElement(tag);
+  if (cls) node.className = cls;
+  if (html !== undefined) node.innerHTML = html;
+  return node;
+}
+
+// ── Render Language Bar ───────────────────────────────────────────────────────
+function renderLangBar() {
+  const langs = [
+    { code: 'zh', label: '中文'  },
+    { code: 'en', label: 'EN'    },
+    { code: 'ja', label: '日本語' },
+    { code: 'ko', label: '한국어' },
+  ];
+  el('langBar').innerHTML = langs.map(l =>
+    `<button class="lang-btn${l.code === lang ? ' active' : ''}" data-lang="${l.code}">${l.label}</button>`
+  ).join('');
+  el('langBar').querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => setLang(btn.dataset.lang));
+  });
+}
+
+// ── Render Store Info ─────────────────────────────────────────────────────────
+function renderStoreInfo() {
+  document.title = t(store.name);
+  el('storeName').textContent   = t(store.name);
+  el('storeAddress').textContent = t(store.address);
+  el('storePhone').innerHTML    = `<a href="tel:${store.phone}">${store.phone}</a>`;
+  el('diningInfo').innerHTML    = t(store.dining).replace(/\n/g, '<br>');
+}
+
+// ── Render Category Tabs ─────────────────────────────────────────────────────
+function renderCatTabs() {
+  el('catTabs').innerHTML = categories.map(cat =>
+    `<button class="cat-tab" data-cat="${cat.id}">${t(cat.label)}</button>`
+  ).join('');
+  el('catTabs').querySelectorAll('.cat-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const sec = document.getElementById('sec-' + btn.dataset.cat);
+      if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+}
+
+// ── Render Price Block (card) ─────────────────────────────────────────────────
+function renderCardPrice(price) {
+  if (!price || price.length === 0) return '';
+  if (price.length === 1 && !price[0].label) {
+    if (price[0].value === 'market') return `<div class="price-market">${t(MARKET_PRICE)}</div>`;
+    return `<div class="price-single">${nt(price[0].value)}</div>`;
+  }
+  const rows = price.map(p => {
+    const val = p.value === 'market' ? t(MARKET_PRICE) : nt(p.value);
+    const lbl = p.label ? t(p.label) : '';
+    return `<div class="price-row">
+      <span class="price-row-label">${lbl}</span>
+      <span class="price-row-dots"></span>
+      <span class="price-row-value">${val}</span>
+    </div>`;
+  }).join('');
+  return `<div class="price-multi">${rows}</div>`;
+}
+
+// ── Render Badges ─────────────────────────────────────────────────────────────
+function renderBadges(tags, cls = 'badge') {
+  return tags.map(code => {
+    const tag = TAGS[code];
+    if (!tag) return '';
+    return `<span class="${cls} ${cls}-${code}">${tag.icon} ${t(tag.label)}</span>`;
+  }).join('');
+}
+
+// ── Render Menu ──────────────────────────────────────────────────────────────
+function renderMenu() {
+  const content = el('menuContent');
+  content.innerHTML = '';
+  categories.forEach(cat => {
+    const items = menuItems.filter(m => m.category === cat.id);
+    if (!items.length) return;
+
+    const section = e('section', 'cat-section');
+    section.id = 'sec-' + cat.id;
+
+    const header = e('div', 'cat-header');
+    header.textContent = t(cat.label);
+    section.appendChild(header);
+
+    const list = e('div', 'items-list');
+    items.forEach(item => {
+      const card = e('div', 'item-card');
+      card.setAttribute('role', 'button');
+      card.setAttribute('tabindex', '0');
+
+      const thumb = e('div', 'item-thumb');
+      if (item.image) {
+        const img = document.createElement('img');
+        img.src = 'images/' + item.image;
+        img.alt = t(item.names);
+        img.loading = 'lazy';
+        thumb.appendChild(img);
+      } else {
+        thumb.textContent = item.emoji;
+      }
+
+      const body = e('div', 'item-body');
+
+      const name = e('div', 'item-name');
+      name.textContent = t(item.names);
+
+      const tags = e('div', 'item-tags');
+      tags.innerHTML = renderBadges(item.tags);
+
+      const prices = e('div', 'item-prices');
+      prices.innerHTML = renderCardPrice(item.price);
+
+      body.appendChild(name);
+      if (item.tags.length) body.appendChild(tags);
+      body.appendChild(prices);
+
+      card.appendChild(thumb);
+      card.appendChild(body);
+
+      const open = () => openModal(item);
+      card.addEventListener('click', open);
+      card.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') open(); });
+
+      list.appendChild(card);
+    });
+
+    section.appendChild(list);
+    content.appendChild(section);
+  });
+}
+
+// ── Intersection Observer → active tab ───────────────────────────────────────
+let observer = null;
+
+function setupObserver() {
+  if (observer) observer.disconnect();
+  const tabs = el('catTabs');
+  const langH  = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--lang-h'));
+  const tabH   = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--tab-h'));
+
+  observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const catId = entry.target.id.replace('sec-', '');
+        tabs.querySelectorAll('.cat-tab').forEach(t => {
+          const active = t.dataset.cat === catId;
+          t.classList.toggle('active', active);
+          if (active) t.scrollIntoView({ inline: 'nearest', block: 'nearest' });
+        });
+      }
+    });
+  }, {
+    rootMargin: `-${langH + tabH + 2}px 0px -55% 0px`,
+    threshold: 0,
+  });
+
+  categories.forEach(cat => {
+    const sec = document.getElementById('sec-' + cat.id);
+    if (sec) observer.observe(sec);
+  });
+}
+
+// ── Modal ────────────────────────────────────────────────────────────────────
+function openModal(item) {
+  activeItem = item;
+  scrollY = window.scrollY;
+
+  // Image / emoji
+  const wrap = el('modalImageWrap');
+  // Remove previous media (keep close button)
+  wrap.querySelectorAll('img, .modal-emoji').forEach(n => n.remove());
+
+  if (item.image) {
+    const img = document.createElement('img');
+    img.src = 'images/' + item.image;
+    img.alt = t(item.names);
+    img.loading = 'lazy';
+    wrap.appendChild(img);
+  } else {
+    const em = e('span', 'modal-emoji');
+    em.textContent = item.emoji;
+    wrap.appendChild(em);
+  }
+
+  // Body
+  const body = el('modalBody');
+  body.innerHTML = '';
+
+  const name = e('h2', 'modal-name');
+  name.textContent = t(item.names);
+  body.appendChild(name);
+
+  // Tags
+  if (item.tags.length) {
+    const tagsDiv = e('div', 'modal-tags');
+    tagsDiv.innerHTML = renderBadges(item.tags, 'modal-badge badge');
+    body.appendChild(tagsDiv);
+  }
+
+  // Price
+  const priceBlock = e('div', 'modal-price-block');
+  const priceLabel = e('div', 'modal-section-label');
+  priceLabel.textContent = t(MODAL_LABELS.price);
+  priceBlock.appendChild(priceLabel);
+
+  if (item.price.length === 1 && !item.price[0].label) {
+    const v = item.price[0].value;
+    const single = e('div', v === 'market' ? 'modal-price-market' : 'modal-price-single');
+    single.textContent = v === 'market' ? t(MARKET_PRICE) : nt(v);
+    priceBlock.appendChild(single);
+  } else {
+    const table = e('div', 'modal-price-table');
+    item.price.forEach(p => {
+      const row = e('div', 'modal-price-row');
+      const lbl = e('span', 'modal-price-row-label');
+      lbl.textContent = p.label ? t(p.label) : '';
+      const val = e('span', 'modal-price-row-value');
+      val.textContent = p.value === 'market' ? t(MARKET_PRICE) : nt(p.value);
+      row.appendChild(lbl);
+      row.appendChild(val);
+      table.appendChild(row);
+    });
+    priceBlock.appendChild(table);
+  }
+  body.appendChild(priceBlock);
+
+  // Desc
+  const descText = t(item.desc);
+  if (descText) {
+    const div = e('div', 'modal-text-block');
+    div.innerHTML = `<div class="modal-section-label">${t(MODAL_LABELS.desc)}</div>
+      <div class="modal-text-content">${descText}</div>`;
+    body.appendChild(div);
+  }
+
+  // Note
+  const noteText = t(item.note);
+  if (noteText) {
+    const div = e('div', 'modal-text-block');
+    div.innerHTML = `<div class="modal-section-label">${t(MODAL_LABELS.note)}</div>
+      <div class="modal-text-content">${noteText}</div>`;
+    body.appendChild(div);
+  }
+
+  el('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  el('modalSheet').scrollTop = 0;
+}
+
+function closeModal() {
+  el('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+  // Restore scroll position after transition
+  setTimeout(() => window.scrollTo({ top: scrollY, behavior: 'instant' }), 10);
+  activeItem = null;
+}
+
+// ── Language Switch ───────────────────────────────────────────────────────────
+function setLang(newLang) {
+  if (newLang === lang) return;
+  lang = newLang;
+  document.documentElement.lang = { zh: 'zh-TW', en: 'en', ja: 'ja', ko: 'ko' }[lang];
+  renderLangBar();
+  renderStoreInfo();
+  renderCatTabs();
+  renderMenu();
+  setupObserver();
+  // If modal open, refresh it
+  if (activeItem) openModal(activeItem);
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+function init() {
+  renderLangBar();
+  renderStoreInfo();
+  renderCatTabs();
+  renderMenu();
+  setupObserver();
+
+  // Modal close button
+  el('modalCloseBtn').addEventListener('click', closeModal);
+
+  // Close on backdrop click (not on sheet click)
+  el('modalOverlay').addEventListener('click', ev => {
+    if (ev.target === el('modalOverlay')) closeModal();
+  });
+
+  // Swipe down to close
+  let touchStartY = 0;
+  el('modalSheet').addEventListener('touchstart', ev => {
+    touchStartY = ev.touches[0].clientY;
+  }, { passive: true });
+  el('modalSheet').addEventListener('touchend', ev => {
+    const delta = ev.changedTouches[0].clientY - touchStartY;
+    if (delta > 80 && el('modalSheet').scrollTop === 0) closeModal();
+  }, { passive: true });
+
+  // ESC to close
+  document.addEventListener('keydown', ev => {
+    if (ev.key === 'Escape') closeModal();
+  });
+}
+
+init();
+</script>
+</body>
+</html>
